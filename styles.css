@@ -155,3 +155,32 @@ footer {
 #lodq{
     font-size: 3rem;
 }
+
+.footer1{
+    padding: 100px 20px;
+    background-image: linear-gradient(#2d557d,#9610fd);
+    color: #fff;
+}
+.footerLogo{
+    color: #fff;
+    /* width: 150px */
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.footer1 h4{
+    text-align: left;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    padding-left: 60px;
+}
+
+.footer1 p{
+    font-size: 12px;
+    text-align: justify;
+    padding-right: 35px;
+    padding-left: 60px;
+}
+.footer1 .row .fa{
+    padding-right: 20px;
+    font-size: 15px;    
+}
