@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Conservation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="top-bar"z-index="2">
+            <div class="name">Consrevify</div>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#trends">Water Usage Trends</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="">LogIn/SIgnUp</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <br>
+<br>
+    <div class="cont">
+        <div class="form sign-in">
+            <h2>Welcome</h2>
+            <label>
+                <span>Email</span>
+                <input type="email" />
+            </label>
+            <label>
+                <span>Password</span>
+                <input type="password" />
+            </label>
+            <p class="forgot-pass">Forgot password?</p>
+            <button type="button" class="submit">Sign In</button>
+         
+        </div>
+        <div class="sub-cont">
+            <div class="img">
+                <div class="img__text m--up">
+                 
+                    <h3>Don't have an account? Please Sign up!<h3>
+                </div>
+                <div class="img__text m--in">
+                
+                    <h3>If you already has an account, just sign in.<h3>
+                </div>
+                <div class="img__btn">
+                    <span class="m--up">Sign Up</span>
+                    <span class="m--in">Sign In</span>
+                </div>
+            </div>
+            <div class="form sign-up">
+                <h2>Create your Account</h2>
+                <label>
+                    <span>Name</span>
+                    <input type="text" />
+                </label>
+                <label>
+                    <span>Email</span>
+                    <input type="email" />
+                </label>
+                <label>
+                    <span>Password</span>
+                    <input type="password" />
+                </label>
+                <button type="button" class="submit">Sign Up</button>
+                
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.img__btn').addEventListener('click', function() {
+            document.querySelector('.cont').classList.toggle('s--signup');
+        });
+    </script>
+
+    <section class="footer1">
+        <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h1 class="footerLogo">Water Conservation</h1>
+                Hello Everyone, Satsriakaal, Namaste, Maa chuda
+            </div>
+            <div class="col-md-3">
+                <h4>Features</h4>
+                <p>Deals & Offers</p>
+                <p>Customer Reviews</p>
+                <p>Cancellation policy</p>
+            </div>
+            <div class="col-md-3">
+                <h4>Quick Contact</h4>
+                <p><i class="fa fa-phone-square"></i> +1 0123456772</p>
+                <p><i class="fa fa-envelope"></i> arpit23132@iiitd.ac.in</p>
+                <p><i class="fa fa-home"></i> xyz road, ABC city</p>
+            </div>
+            <div class="col-md-3">
+                <h4>Follow Us On</h4>
+                <p><i class="fa-brands fa-facebook"></i> Facebook</p>
+                <p><i class="fa-brands fa-youtube"></i> Youtube</p>
+                <p><i class="fa-brands fa-twitter"></i> Twitter</p>
+            </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Water Conservation. All rights reserved.</p>
+    </footer>
+</body>
+</html>
