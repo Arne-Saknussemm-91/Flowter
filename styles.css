@@ -9,6 +9,8 @@
     width: 80%;
     margin: 0 auto;
     padding: 20px;
+    display: inline;
+    /* padding-left: 80px; */
 }
 
 /* Row class to create a flex container */
@@ -50,20 +52,39 @@ header {
 
 .top-bar h1{
     color: #060000;
+    font-size: 40px;
 }
 
-ul {
+/* ul {
     list-style-type: none;
-}
+} */
 
-ul li {
+.navbar ul li {
     display: inline;
     margin-left: 20px;
+    position: relative;
+    /* list-style: none; */
 }
 
-ul li a {
+.navbar ul li::after{
+    content: '';
+    height: 3px;
+    width: 0;
+    background: #009688;
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    transition: 0.4s;
+}
+
+.navbar ul li:hover::after{
+    width: 100%;
+}
+
+.navbar ul li a {
     text-decoration: none;
     color: #060000;
+    text-transform: uppercase;
 }
 
 main {
@@ -113,10 +134,62 @@ footer {
 
 #lander{
     width: 100%;
-    height: 800px;
+    height: 100vh;
+    background-image: linear-gradient(rgba(0,0,0,0.75),rgba(0,0,0,0.75));
+    background-size: cover;
+    background-position: center;
 }
 
-.lander-img{
+.content1{
+    width: 100%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: #060000;
+}
+
+.content1 h1{
+    font-size: 30px;
+    margin-top: 290px;
+    color: #060000;
+}
+
+button{
+    width: 200px;
+    padding: 15px 0;
+    text-align: center;
+    margin: 1px 10px;
+    border-radius: 25px;
+    font-weight: bold;
+    border: 2px solid #009688;
+    background: transparent;
+    color: #060000;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+span{
+    background: #009688;
+    height: 100%;
+    width: 0;
+    border-radius: 25px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: -1;
+    transition: 0.4s;
+}
+
+button:hover span{
+    width: 100%;
+}
+
+button:hover{
+    border: none;
+}
+/* .lander-img{
     width: 100%;
     border-width: 100px;
     border-color: brown;
@@ -125,11 +198,12 @@ footer {
     filter: contrast(150%);
     filter: saturate(160%);
     filter: brightness(90%);
-}
+} */
 
 .users-feedback{
-    padding: 7px 0;
+    padding: 7px 120px;
     background-color: #f2f2f2;
+    /* display: inline; */
 }
 
 .user-review{
@@ -137,6 +211,7 @@ footer {
     box-shadow: 0 0 10px 0 rgba(0,0,100,0.2);
     padding-bottom: 50px;
     margin-right: 15px;
+    /* display: inline; */
 }
 
 .user-review p{
@@ -152,7 +227,8 @@ footer {
 
 
 .lap{
-    margin-left: 10px;
+    margin-left: -100px;
+    font-size: 2rem;
 }
 
 #lodq{
@@ -160,7 +236,7 @@ footer {
 }
 
 .footer1{
-    padding: 100px 20px;
+    padding: 100px 200px;
     background-image: linear-gradient(#2d557d,#9610fd);
     color: #fff;
 }
