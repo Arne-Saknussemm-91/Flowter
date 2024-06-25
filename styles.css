@@ -27,6 +27,10 @@
     padding: 15px;
 }
 
+/* .cols{
+    padding-right: 10px;
+} */
+
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
@@ -51,13 +55,9 @@ header {
 }
 
 .top-bar h1{
-    color: #060000;
-    font-size: 40px;
+    color: #fdfbfb;
+    font-size: 40px; 
 }
-
-/* ul {
-    list-style-type: none;
-} */
 
 .navbar ul li {
     display: inline;
@@ -83,26 +83,26 @@ header {
 
 .navbar ul li a {
     text-decoration: none;
-    color: #060000;
+    color: #fff;
     text-transform: uppercase;
 }
 
 main {
-    margin-top: 80px;
-    padding: 40px;
+    /* margin-top: 2px; */
+    padding: 20px;
 }
 
-h1, h2 {
-    color: #008080;
-    margin-bottom: 10px;
+.about-us{
+    color: #fff;
 }
 
-#water-graph {
-    width: 100%;
-    height: 400px;
-    background-color: #f2f2f2;
+.about-us h3{
+    padding-top: 50px;
 }
 
+.what-we-do h1{
+    color: #fff;
+}
 footer {
     background-color: #f2f2f2;
     padding: 20px;
@@ -113,6 +113,10 @@ footer {
     color: #f2f2f2;
 }
 
+.aboutp1{
+    color: #fefdfd;
+    padding-top: 70px;
+}
 .logo{
     width: 20px;
     height: 20px;
@@ -152,7 +156,7 @@ footer {
 .content1 h1{
     font-size: 30px;
     margin-top: 290px;
-    color: #060000;
+    color: #fefdfd;
 }
 
 button{
@@ -164,10 +168,10 @@ button{
     font-weight: bold;
     border: 2px solid #009688;
     background: transparent;
-    color: #060000;
+    color: #fffdfd;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
+    overflow: hidden; 
 }
 
 span{
