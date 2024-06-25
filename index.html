@@ -4,189 +4,176 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Water Conservation</title>
-    <title>Conservify</title>
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap");
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Open Sans", sans-serif;
-}
-
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  width: 100%;
-  padding: 0 10px;
-}
-
-body::before {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: url("https://www.codingnepalweb.com/demos/create-glassmorphism-login-form-html-css/hero-bg.jpg"), #000;
-  background-position: center;
-  background-size: cover;
-}
-
-.wrapper {
-  width: 400px;
-  border-radius: 8px;
-  padding: 30px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  color: #fff;
-}
-
-.input-field {
-  position: relative;
-  border-bottom: 2px solid #ccc;
-  margin: 15px 0;
-}
-
-.input-field label {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translateY(-50%);
-  color: #fff;
-  font-size: 16px;
-  pointer-events: none;
-  transition: 0.15s ease;
-}
-
-.input-field input {
-  width: 100%;
-  height: 40px;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  color: #fff;
-}
-
-.input-field input:focus~label,
-.input-field input:valid~label {
-  font-size: 0.8rem;
-  top: 10px;
-  transform: translateY(-120%);
-}
-
-.forget {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 25px 0 35px 0;
-  color: #fff;
-}
-
-#remember {
-  accent-color: #fff;
-}
-
-.forget label {
-  display: flex;
-  align-items: center;
-}
-
-.forget label p {
-  margin-left: 8px;
-}
-
-.wrapper a {
-  color: #efefef;
-  text-decoration: none;
-}
-
-.wrapper a:hover {
-  text-decoration: underline;
-}
-
-button {
-  background: #fff;
-  color: #000;
-  font-weight: 600;
-  border: none;
-  padding: 12px 20px;
-  cursor: pointer;
-  border-radius: 3px;
-  font-size: 16px;
-  border: 2px solid transparent;
-  transition: 0.3s ease;
-}
-
-button:hover {
-  color: #fff;
-  border-color: #fff;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.register {
-  text-align: center;
-  margin-top: 30px;
-  color: #fff;
-}
-    </style>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-  <header>
-    <div class="top-bar">
-        <!-- <div class="name">Water Conservation</div> -->
-        <h1>Water Conservation</h1>
-        <div class="navbar">
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#trends">Water Usage Trends</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+    <header>
+        <div class="top-bar">
+            <!-- <div class="name">Water Conservation</div> -->
+            <h1>Water Conservation</h1>
+            <div class="navbar">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#trends">Water Usage Trends</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-</header>
+        <div class="content1">
+            <h1>Join us in our mission to save water and preserve our planet.</h1>
+            <div>
+                <a href="login.html"><button type="button"><span></span>LogIn</button></a>
+                <a href="signup.html"><button type="button"><span></span>SIgnUp</button></a>
+            </div>
+        </div>
+    </header>
     
-  <div class="wrapper">
-    <form action="#">
-      <h2>Login</h2>
-        <div class="input-field">
-        <input type="text" required>
-        <label>Enter your email</label>
-      </div>
-      <div class="input-field">
-        <input type="password" required>
-        <label>Enter your password</label>
-      </div>
-      <div class="forget">
-        <label for="remember">
-          <input type="checkbox" id="remember">
-          <p>Remember me</p>
-        </label>
-        <a href="#">Forgot password?</a>
-      </div>
-      <a href="flo.html"><button type="submit">Log In</button></a>
-      <div class="register">
-        <p>Don't have an account? <a href="#">Register</a></p>
-      </div>
-    </form>
-  </div>
+    <section>
+        <img id="lander" src="water drop .jpg">
+    </section>
 
+    <main>
+<!-- 
+        <section id="home">
+            <h1>Welcome to Water Conservation</h1>
+            <p class="aboutp">Join us in our mission to save water and preserve our planet.</p>
+        </section>
+         -->
+        <section class="about-us">
+            <h1>About Us</h1>
+            <div class="row">
+                <div class="col">
+                    <h3>We are the World's Fastest Emerging Platform.</h3>
+                    <p class="aboutp">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odit inventore
+                        totam molestias tempora magni quam accusamus possimus deserunt error repellat.
+                        Magni, harum. Veniam, distinctio repellat sapiente est numquam ab illo.
+                        Ratione exercitationem reiciendis facere, adipisci in distinctio ipsum nihil alias
+                        molestias soluta nostrum perferendis fugiat ullam quo! Est eos sed in, repellendus, 
+                        vero eveniet totam modi cum deserunt, placeat sequi.
+                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste hic commodi non sequi
+                        iure sit esse aliquam asperiores minus officiis dolore eos aliquid culpa cupiditate molestiae
+                        cum, repudiandae accusantium! Rerum. Esse velit dignissimos dolore, minima atque reprehenderit
+                        veritatis voluptas animi similique earum! A impedit explicabo, voluptates quisquam assumenda
+                        obcaecati ut eaque laboriosam aliquid laudantium dolor, accusantium vero libero, corrupti porro!</p>
+
+                </div>
+                <div class="cols">
+                    <img src="group about us.jpg">
+                </div>
+            </div>
+        </section>
+
+        <section class="what-we-do">
+            <h1>What We Do?</h1>
+            <div class="row">
+                <div class="cols">
+                    <img src="what we do.jpg">
+                </div>
+                <div class="col">
+                    <!-- <h3>We are the World's Fastest Emerging Platform.</h3> -->
+                    <p class="aboutp1">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odit inventore
+                        totam molestias tempora magni quam accusamus possimus deserunt error repellat.
+                        Magni, harum. Veniam, distinctio repellat sapiente est numquam ab illo.
+                        Ratione exercitationem reiciendis facere, adipisci in distinctio ipsum nihil alias
+                        molestias soluta nostrum perferendis fugiat ullam quo! Est eos sed in, repellendus, 
+                        vero eveniet totam modi cum deserunt, placeat sequi.
+                        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iste hic commodi non sequi
+                        iure sit esse aliquam asperiores minus officiis dolore eos aliquid culpa cupiditate molestiae
+                        cum, repudiandae accusantium! Rerum. Esse velit dignissimos dolore, minima atque reprehenderit
+                        veritatis voluptas animi similique earum! A impedit explicabo, voluptates quisquam assumenda
+                        obcaecati ut eaque laboriosam aliquid laudantium dolor, accusantium vero libero, corrupti porro!</p>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- <section id="trends">
+            <h2>Water Usage Trends</h2>
+            <div id="water-graph">
+                <img class="graph" src="199425-004-5CCA6D6A.jpg">
+            </div>
+        </section> -->
+        
+        <!-- <section id="contact">
+            <h2>Contact Us</h2>
+            <form>
+                <input type="text" placeholder="Name">
+                <input type="email" placeholder="Email">
+                <textarea placeholder="Your message"></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+        </section> -->
+    </main>
+    
+    <section class="users-feedback">
+    <h1 class="lap">Users Review</h1>
+    <div class="container">
+    <div class="row">
+    <div class="col-md-4">
+        <div class="user-review">
+            <h1 id="lodq" >”</h1>
+        <p>Hello Everyone, Satsriakaal, Namaste, Jai Shree Ram</p>
+        <h5>Arpit Raj</h5>
+        <small>India</small>
+        </div>
+        <img src="pokemon-journeys-ash-greninja-battle.jpg">
+    </div>
+    <div class="col-md-4">
+        <div class="user-review">
+            <h1 id="lodq" >”</h1>
+        <p>Hello Everyone, Satsriakaal, Namaste, Jai Shree Ram</p>
+        <h5>Arpit Raj</h5>
+        <small>India</small>
+        </div>
+        <img src="pokemon-journeys-ash-greninja-battle.jpg">
+    </div>
+    <div class="col-md-4">
+        <div class="user-review">
+        <h1 id="lodq" >”</h1>
+        <p>Hello Everyone, Satsriakaal, Namaste, Jai Shree Ram</p>
+        <h5>Arpit Raj</h5>
+        <small>India</small>
+        </div>
+        <img src="pokemon-journeys-ash-greninja-battle.jpg">
+    </div>
+    </div>
+    </div>
+    </section>
+    <section class="footer1">
+        <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h1 class="footerLogo">Water Conservation</h1>
+                Hello Everyone, Satsriakaal, Namaste, Jai Shree Ram
+            </div>
+            <div class="col-md-3">
+                <h4>Features</h4>
+                <p>Deals & Offers</p>
+                <p>Customer Reviews</p>
+                <p>Cancellation policy</p>
+            </div>
+            <div class="col-md-3">
+                <h4>Quick Contact</h4>
+                <p><i class="fa fa-phone-square"></i> +1 0123456772</p>
+                <p><i class="fa fa-envelope"></i> arpit23132@iiitd.ac.in</p>
+                <p><i class="fa fa-home"></i> xyz road, ABC city</p>
+            </div>
+            <div class="col-md-3">
+                <h4>Follow Us On</h4>
+                <p><i class="fa-brands fa-facebook"></i> Facebook</p>
+                <p><i class="fa-brands fa-youtube"></i> Youtube</p>
+                <p><i class="fa-brands fa-twitter"></i> Twitter</p>
+            </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Water Conservation. All rights reserved.</p>
+    </footer>
+    <script src="script.js" defer></script>
 </body>
 </html>
