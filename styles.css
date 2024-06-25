@@ -206,14 +206,22 @@ button:hover{
 
 .users-feedback{
     padding: 7px 120px;
-    background-color: #f2f2f2;
+    background-color: #0d131c;
     /* display: inline; */
+}
+
+.users-feedback h1{
+    color: #fdfbfb;
+}
+
+.users-feedback p, h5, small{
+    color: #fdfbfb;
 }
 
 .user-review{
     text-align: center;
-    box-shadow: 0 0 10px 0 rgba(0,0,100,0.2);
-    padding-bottom: 50px;
+    box-shadow: 0 0 10px 0 rgba(168, 168, 198, 0.2);
+    padding-bottom: 50px; 
     margin-right: 15px;
     /* display: inline; */
 }
@@ -222,7 +230,7 @@ button:hover{
     padding: 0px 10px 10px 10px;
 }
 .users-feedback img{
-    width: 60px;
+    width: 60px; 
     height: 60px;
     border-radius: 50%;
     position: relative;
