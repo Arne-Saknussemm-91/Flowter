@@ -1,0 +1,43 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+  }
+  
+  .scroll-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    width: 80%;
+    padding: 10px 0;
+  }
+  
+  .scroll-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .item {
+    flex: 0 0 200px;
+    height: 150px;
+    background-color: #f1f1f1;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .scroll-btn {
+    font-size: 30px;
+    background-color: #f1f1f1;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .scroll-btn:hover {
+    background-color: #e1e1e1;
+  }
