@@ -1,3 +1,18 @@
+@font-face {
+    font-family: 'Satoshi';
+    src: url("Satoshi-Regular.otf") format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+h1, h2{
+    font-family: "Satoshi", serif;
+}
+
+p{
+    font-family: "Satoshi", serif;
+}
+
 * {
     margin: 0;
     padding: 0;
