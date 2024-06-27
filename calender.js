@@ -13,80 +13,7 @@ let eventDescriptionInput =
 let reminderList =
 	document.getElementById("reminderList");
 
-// Counter to generate unique event IDs
-let eventIdCounter = 1;
-
-// Function to add events
-function addEvent() {
-	let date = eventDateInput.value;
-	let title = eventTitleInput.value;
-	let description = eventDescriptionInput.value;
-
-	if (date && title) {
-		// Create a unique event ID
-		let eventId = eventIdCounter++;
-
-		events.push(
-			{
-				id: eventId, date: date,
-				title: title,
-				description: description
-			}
-		);
-		showCalendar(currentMonth, currentYear);
-		eventDateInput.value = "";
-		eventTitleInput.value = "";
-		eventDescriptionInput.value = "";
-		displayReminders();
-	}
-}
-
-// Function to delete an event by ID
-function deleteEvent(eventId) {
-	// Find the index of the event with the given ID
-	let eventIndex =
-		events.findIndex((event) =>
-			event.id === eventId);
-
-	if (eventIndex !== -1) {
-		// Remove the event from the events array
-		events.splice(eventIndex, 1);
-		showCalendar(currentMonth, currentYear);
-		displayReminders();
-	}
-}
-
-// Function to display reminders
-function displayReminders() {
-	reminderList.innerHTML = "";
-	for (let i = 0; i < events.length; i++) {
-		let event = events[i];
-		let eventDate = new Date(event.date);
-		if (eventDate.getMonth() ===
-			currentMonth &&
-			eventDate.getFullYear() ===
-			currentYear) {
-			let listItem = document.createElement("li");
-			listItem.innerHTML =
-				`<strong>${event.title}</strong> - 
-			${event.description} on 
-			${eventDate.toLocaleDateString()}`;
-
-			// Add a delete button for each reminder item
-			let deleteButton =
-				document.createElement("button");
-			deleteButton.className = "delete-event";
-			deleteButton.textContent = "Delete";
-			deleteButton.onclick = function () {
-				deleteEvent(event.id);
-			};
-
-			listItem.appendChild(deleteButton);
-			reminderList.appendChild(listItem);
-		}
-	}
-}
-
+	
 // Function to generate a range of 
 // years for the year select input
 function generate_year_range(start, end) {
@@ -222,23 +149,7 @@ function showCalendar(month, year) {
 	displayReminders();
 }
 
-// Function to create an event tooltip
-function createEventTooltip(date, month, year) {
-	let tooltip = document.createElement("div");
-	tooltip.className = "event-tooltip";
-	let eventsOnDate = getEventsOnDate(date, month, year);
-	for (let i = 0; i < eventsOnDate.length; i++) {
-		let event = eventsOnDate[i];
-		let eventDate = new Date(event.date);
-		let eventText = `<strong>${event.title}</strong> - 
-			${event.description} on 
-			${eventDate.toLocaleDateString()}`;
-		let eventElement = document.createElement("p");
-		eventElement.innerHTML = eventText;
-		tooltip.appendChild(eventElement);
-	}
-	return tooltip;
-}
+
 
 // Function to get events on a specific date
 function getEventsOnDate(date, month, year) {
@@ -265,9 +176,10 @@ function daysInMonth(iMonth, iYear) {
 // Call the showCalendar function initially to display the calendar
 showCalendar(currentMonth, currentYear);
 
-const sidebarToggle = document.querySelector('.sidebar-toggle');
-const sidebar = document.querySelector('.sidebar');
-
-sidebarToggle.addEventListener('click', () => {
-  sidebar.classList.toggle('collapsed');
-});
+function toggleSidebar() {
+	const sidebar = document.getElementById('sidebar');
+	sidebar.classList.toggle('collapsed');
+	const hide_stuff = document.getElementById('ulhai');
+	hide_stuff.classList.toggle('hide-list');
+  }
+  

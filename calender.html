@@ -11,20 +11,16 @@
 </head>
 
 <body>
-	<!-- Main wrapper for the calendar application -->
-	<div class="sidebar">
-		<div class="sidebar-header">
-		  <h3>Sidebar</h3>
-		  <button class="sidebar-toggle">
-			<i class="fas fa-bars"></i>
-		  </button>
-		</div>
-		<ul class="sidebar-menu">
+	
+	<div class="sidebar" id="sidebar">
+		<button class="toggle-btn" onclick="toggleSidebar()"><img height="20px" width="20px" src="more.png"></button>
+		<ul id="ulhai">
 		  <li><a href="#">Profile</a></li>
 		  <li><a href="#">My Taps</a></li>
 		  <li><a href="#">Raise a Issue</a></li>
 		</ul>
 	  </div>
+	
 	<div class="wrapper">
 		<div class="container-calendar">
 			<div id="right">
