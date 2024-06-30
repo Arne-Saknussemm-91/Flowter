@@ -54,51 +54,61 @@ html{
     box-shadow: inset 0 0 0 0px white;
 }
 
-.font-style-video{
-    font-family: "Satoshi", serif;
-    position: absolute;
-    top:0;
-    left:0;
-    z-index:1;
-    margin-top: 20%;
-    margin-left: 37%;
-    font-size: 7rem;
-    font-weight: bold;
-    background: var(--Grey-Gradient-Exclusion, linear-gradient(180deg, #FFF 53%, rgba(255, 255, 255, 0.00) 100%));
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    mix-blend-mode: exclusion;
+#videoDiv {width: 100%; height: auto; position: relative; overflow: hidden;}
+#video1 { margin: auto; display: block;}
+#videoMessage { position: absolute; top: 0; left: 0;
+display: flex;
+flex-direction: column; 
+justify-content: center;
+align-items: center; 
+width: 100%;
+height: 100%;}
+
+.messagevideo1{
+	gap: -10rem;
 }
 
-.font-style-video1{
+.message1{
+	font-family: "Satoshi-bold", serif;
+	font-size: 10rem;
+	font-weight: bold;
+	background: var(--Grey-Gradient-Exclusion, linear-gradient(180deg, #FFF 53%, rgba(255, 255, 255, 0.00) 100%));
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	mix-blend-mode: exclusion;
+	letter-spacing: -0.7rem;
+	margin-bottom: -5rem;
+}
+
+.message2{
+	text-align: center;
     font-family: "Satoshi", serif;
     color: #ffffff;
-    position:absolute;
     top:0;
     left:0;
     z-index:1;
-    margin-top: 28%;
-    margin-left: 32%;
-    font-size: 3rem;
+    font-size: 1.75rem;
 }
 
-.learn-more-button{
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1 0 0;border-radius: 36px;
+.videoMessage1{
+	position: absolute; top: 0; left: 0;
+display: flex;
+flex-direction: column; 
+justify-content: center;
+align-items: center; 
+width: 100%;
+height: 100%;
+	gap: 2.5rem;
+}
+
+.message3{
+	border-radius: 2rem;
     background: var(--Ocean-Blue, #0A86F8);
-    font-weight: 900;
     color: #e8e8e8;
+	padding: 1rem 2rem;
     font-family: "Satoshi", serif;
-    width: 7%;
-    margin-top: 26%;
-    margin-left: 44%;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-    border-radius: 2.25rem;
+	font-size: 1.5rem;
     box-shadow: inset 0 0 0 2px white;
     border-color: #e8e8e8;
 }
