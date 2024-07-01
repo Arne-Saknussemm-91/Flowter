@@ -125,16 +125,17 @@ height: 100%;
 .connect-text{
     color: #000;
     text-align: center;
-    
-    /* Icon box Header */
+    align-items: center;
     font-family: Satoshi;
     font-size: 32px;
-    font-style: normal;
     font-weight: 700;
-    line-height: normal;
-    position: absolute;
-    margin-top: 30rem;
-    margin-left: 6.5rem;
+}
+
+.connect-text-temp{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
 }
 
 .connect-text1{
@@ -147,22 +148,36 @@ height: 100%;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-    margin-top: 32.8rem;
+}
+
+.connect-text-temp1{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
+}
+
+.monitor-text-temp{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
 }
 
 .monitor-text{
     color: #000;
     text-align: center;
-    
-    /* Icon box Header */
+    align-items: center;
     font-family: Satoshi;
     font-size: 32px;
-    font-style: normal;
     font-weight: 700;
-    line-height: normal;
-    position: absolute;
-    margin-top: 30rem;
-    margin-left: 7rem;
+}
+
+.monitor-text-temp1{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
 }
 
 .monitor-text1{
@@ -175,22 +190,29 @@ height: 100%;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-    margin-top: 32.8rem;
+}
+
+.save-text-temp{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
 }
 
 .save-text{
     color: #000;
     text-align: center;
-    
-    /* Icon box Header */
+    align-items: center;
     font-family: Satoshi;
     font-size: 32px;
-    font-style: normal;
     font-weight: 700;
-    line-height: normal;
-    position: absolute;
-    margin-top: 30rem;
-    margin-left: 8rem;
+}
+
+.save-text-temp1{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
 }
 
 .save-text1{
@@ -203,7 +225,6 @@ height: 100%;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-    margin-top: 32.8rem;
 }
 
 .pricing{
