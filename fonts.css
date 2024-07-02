@@ -256,5 +256,101 @@ height: 100%;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-    width: 50%;
+}
+
+.text-below1{
+    color: #FFF;
+    text-align: center;
+    
+    /* Section Header */
+    font-family: Satoshi;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.panitext1{
+    color: var(--Ocean-Blue, #0A86F8);
+
+    /* Icon box Header */
+    font-family: Satoshi;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.panitext2{
+    color: #FFF;
+
+    /* Section Header */
+    font-family: Satoshi;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.panitext3{
+    color: #FFF;
+
+    /* Body Text */
+    font-family: Satoshi;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.review-heading-text{
+    color: #FFF;
+    text-align: center;
+    
+    /* Section Header */
+    font-family: Satoshi;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.review-text{
+    color: #FFF;
+
+    /* Body Text */
+    font-family: Satoshi;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.john-doe{
+    align-self: stretch;
+    color: #FFF;
+
+    /* Icon box Header */
+    font-family: Satoshi;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.ehead-title{
+    align-self: stretch;
+    color: #0A86F8;
+
+    /* Button Text bold */
+    font-family: Satoshi;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
 }
