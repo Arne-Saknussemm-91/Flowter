@@ -354,3 +354,27 @@ height: 100%;
     font-weight: 700;
     line-height: normal;
 }
+
+.footer-main-no-heading{
+	align-self: stretch;
+	color: #000;
+
+	/* Button Text */
+	font-family: Satoshi;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+}
+
+.footer-main-no-content{
+	align-self: stretch;
+	color: #000;
+
+	/* Nav Text */
+	font-family: Satoshi;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
