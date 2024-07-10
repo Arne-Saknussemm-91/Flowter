@@ -1,0 +1,129 @@
+#include <WiFi.h>
+#include <WebSocketsClient.h>
+
+// WiFi credentials
+const char* ssid = "Prav";
+const char* password = "temp1234";
+
+// WebSocket server details
+const char* websocketServerAddress = "192.168.143.7";  // Replace with your laptop's IP address
+const uint16_t websocketServerPort = 8000;             // Port where WebSocket server is running
+
+// Flow sensor pins and variables
+byte sensorPin = 4;  // Use D4 for the sensor pin, which corresponds to GPIO 4
+byte statusLed = 13;  // Status LED pin
+byte sensorInterrupt = digitalPinToInterrupt(sensorPin);  // Get the interrupt number for the sensor pin
+
+// The hall-effect flow sensor outputs approximately 4.5 pulses per second per litre/minute of flow.
+float calibrationFactor = 52.43;
+
+volatile byte pulseCount;
+float flowRate;
+unsigned int flowMilliLitres;
+unsigned long totalMilliLitres;
+unsigned long lastSentMilliLitres;  // Track last sent totalMilliLitres
+
+// WebSocket and WiFi objects
+WiFiClient wifiClient;
+WebSocketsClient webSocket;
+
+void IRAM_ATTR pulseCounter() {
+  // Increment the pulse counter
+  pulseCount++;
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  // Initialize WiFi connection
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("WiFi connected");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+
+  // Initialize WebSocket client
+  webSocket.begin(websocketServerAddress, websocketServerPort, "/");
+  webSocket.onEvent(webSocketEvent);
+
+  // Initialize flow sensor
+  pinMode(statusLed, OUTPUT);
+  digitalWrite(statusLed, HIGH);  // Active-low LED
+  pinMode(sensorPin, INPUT_PULLUP);
+  pulseCount = 0;
+  flowRate = 0.0;
+  flowMilliLitres = 0;
+  totalMilliLitres = 0;
+  lastSentMilliLitres = 0;  // Initialize last sent totalMilliLitres
+
+  // Attach interrupt for the flow sensor
+  attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+  Serial.println("Flow sensor initialized");
+
+  delay(500);  // Short delay before starting main loop
+}
+
+void loop() {
+  webSocket.loop();
+
+  static unsigned long lastSendTime = 0;  // Initialize last send time
+  const unsigned long sendInterval = 10000;  // Interval in milliseconds (10 seconds)
+
+  if (millis() - lastSendTime > sendInterval) {    // Check if it's time to send data
+    detachInterrupt(sensorInterrupt);  // Disable interrupt during calculation
+
+    // Calculate flow rate in litres/minute
+    flowRate = ((1000.0 / (millis() - lastSendTime)) * pulseCount) / calibrationFactor;
+
+    // Note the time of this processing pass
+    unsigned long currentTime = millis();
+    lastSendTime = currentTime;
+
+    // Calculate flow in millilitres
+    flowMilliLitres = (flowRate / 60) * 1000;
+
+    // Add millilitres passed to cumulative total
+    totalMilliLitres += flowMilliLitres;
+
+    // Calculate the volume flowed since the data was last sent
+    unsigned long volumeSinceLastSent = totalMilliLitres - lastSentMilliLitres;
+
+    // Print flow rate and total flow to serial (optional for debugging)
+    Serial.print("Flow rate: ");
+    Serial.print(flowRate);  // Print flow rate in L/min
+    Serial.print(" L/min\t");
+
+    Serial.print("Total flow: ");
+    Serial.print(totalMilliLitres);
+    Serial.println(" mL");
+
+    // Send data via WebSocket
+    String dataToSend = "{\"type\":\"sdata\",\"id\":\"b1\",\"total\":" + String(volumeSinceLastSent) + "}";  // JSON with id and total
+    webSocket.sendTXT(dataToSend);  // Send data as text
+    Serial.print("Sent: ");
+    Serial.println(dataToSend);
+
+    // Update last sent totalMilliLitres
+    lastSentMilliLitres = totalMilliLitres;
+
+    // Reset pulse counter
+    pulseCount = 0;
+
+    // Reattach interrupt for flow sensor
+    attachInterrupt(sensorInterrupt, pulseCounter, FALLING);
+  }
+}
+
+void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
+  switch (type) {
+    case WStype_DISCONNECTED:
+      Serial.println("WebSocket Disconnected!");
+      break;
+    case WStype_CONNECTED:
+      Serial.println("WebSocket Connected!");
+      break;
+  }
+}
