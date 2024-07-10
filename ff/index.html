@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Flow Rate Monitoring</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script defer src="scripts.js"></script>
+</head>
+<body>
+    <h1>FlowMeter</h1>
+    <div class="location-container">
+        <h2 id="location">Waiting for data...</h2>
+    </div>
+    <div class="container">
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div class="calendar-container">
+            <div class="month">
+                <span id="prevMonth">&#9664;</span>
+                <span id="monthAndYear"></span>
+                <span id="nextMonth">&#9654;</span>
+            </div>
+            <div class="grid-calendar"></div>
+        </div>
+    </div>
+    <div class="date-info">
+        Date: <span id="date">Waiting for data...</span><br>
+        Value: <span id="datevalue">Waiting for data...</span>
+    </div>
+</body>
+</html>
