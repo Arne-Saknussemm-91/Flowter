@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Flow Rate Monitoring</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script defer src="scripts.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header">
+            FlowTer
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="calendardiv">
+            <div class="month">
+                <span id="prevMonth">&#9664;</span>
+                <span id="monthAndYear"></span>
+                <span id="nextMonth">&#9654;</span>
+            </div>
+            <div class="grid-calendar"></div>
+        </div>
+        <div class="graphdiv">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div class="infodiv">
+            <div class="totalvol">
+                Total Consumption: <span id="totalConsumption">Waiting for data...</span> Litres
+            </div>
+            <p id="info1">In last hour: <span id="lasth">Waiting for data...</span></p>
+            <div class="statusdiv">
+                <p id="info2">Consumption status: </p>
+                <div class="lightbox" id="consumptionStatus"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
