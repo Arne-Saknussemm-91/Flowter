@@ -24,14 +24,23 @@
             </div>
             <div class="grid-calendar"></div>
         </div>
+
         <div class="graphdiv">
+            <div class="chart-controls">
+                <button id="past1Min">Past 1 Minute</button>
+                <button id="past1Hour">Past 1 Hour</button>
+                <button id="wholeDay">Whole Day</button>
+                <button id="thisWeek">This Week</button>
+                <button id="thisMonth">This Month</button>
+            </div>
             <canvas id="myChart"></canvas>
         </div>
+
         <div class="infodiv">
             <div class="totalvol">
                 Total Consumption: <span id="totalConsumption">Waiting for data...</span> Litres
             </div>
-            <p id="info1">In last hour: <span id="lasth">Waiting for data...</span></p>
+            <p id="info1">Selected Date: <span id="lasth">Waiting for data...</span></p>
             <div class="statusdiv">
                 <p id="info2">Consumption status: </p>
                 <div class="lightbox" id="consumptionStatus"></div>

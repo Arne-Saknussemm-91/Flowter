@@ -69,6 +69,28 @@ body {
     border: 2px solid hsl(0, 0%, 5%);
     border-radius: 10px;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chart-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.chart-controls button {
+    background-color: rgb(0, 89, 255);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.chart-controls button:hover {
+    background-color: rgb(0, 72, 200);
 }
 
 .infodiv {

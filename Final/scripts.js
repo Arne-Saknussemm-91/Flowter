@@ -1,236 +1,486 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const monthAndYear = document.getElementById('monthAndYear');
-    const prevMonth = document.getElementById('prevMonth');
-    const nextMonth = document.getElementById('nextMonth');
-    const gridCalendar = document.querySelector('.grid-calendar');
-    const totalConsumptionElement = document.getElementById('totalConsumption');
-    const consumptionStatusElement = document.getElementById('consumptionStatus');
-    const lasthele = document.getElementById('lasth');
+    document.addEventListener('DOMContentLoaded', function() {
+        const monthAndYear = document.getElementById('monthAndYear');
+        const prevMonth = document.getElementById('prevMonth');
+        const nextMonth = document.getElementById('nextMonth');
+        const gridCalendar = document.querySelector('.grid-calendar');
+        const totalConsumptionElement = document.getElementById('totalConsumption');
+        const consumptionStatusElement = document.getElementById('consumptionStatus');
+        const lasthele = document.getElementById('lasth');
 
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
+        // Time interval buttons
+        const past1MinButton = document.getElementById('past1Min');
+        const past1HourButton = document.getElementById('past1Hour');
+        const wholeDayButton = document.getElementById('wholeDay');
+        const thisWeekButton = document.getElementById('thisWeek');
+        const thisMonthButton = document.getElementById('thisMonth');
 
-    // Object to store values for each date
-    let dateValues = {};
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let today = new Date().toISOString().split('T')[0];
+        let totalValue = 0;
+        let todayTotalValue = 0;
 
-    // Initialize total value
-    let totalValue = 0;
+        let dateValues = {};
 
-    // Initialize WebSocket
-    const socket = new WebSocket('ws://localhost:8000'); // Adjust URL as needed
+        const socket = new WebSocket('ws://localhost:8000'); // Adjust URL as needed
 
-    socket.onopen = function(event) {
-        console.log('WebSocket connection opened.');
-        // Request data for the current month when the WebSocket connection opens
-        requestDataForMonth(currentYear, currentMonth);
-    };
+        socket.onopen = function(event) {
+            console.log('WebSocket connection opened.');
+            updateChartData('minute', 1); // Default to past 1 minute
+            requestDataForMonth(currentYear, currentMonth); // Request data for the current month
+            requestDataForDate(today); // Request data for today
+        };
 
-    socket.onclose = function(event) {
-        console.log('WebSocket connection closed.');
-    };
+        socket.onclose = function(event) {
+            console.log('WebSocket connection closed.');
+        };
 
-    socket.onerror = function(error) {
-        console.error('WebSocket error:', error);
-    };
+        socket.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
 
-    socket.onmessage = function(event) {
+        socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
         console.log('Received data from server:', data);
+    if (data.type === 'date') {
+                totalConsumptionElement.textContent = data.totval;
+                todayTotalValue = data.totval; // Update today's total consumption totval
+                lasthele.textContent = data.date;
+                updateConsumptionStatus();
+        const { values } = data;
+        const now = new Date();
+        const currentTime = now.toISOString().split('T')[1].split('.')[0]; // Current time in HH:MM:SS format
 
-        // Check if the received data is for a single date or for the entire month
-        if (data.type === 'curr') {
-            // Handle data for a single date
-            const receivedDate = new Date(data.date);
-            const receivedDay = receivedDate.getDate();
-            const dateString = data.date;
+        // Initialize labels and data arrays
+        let labels = [];
+        let dataset = [];
 
-            // Increment total value
-            totalValue += data.value || 0;
+        values.forEach(interval => {
+            const { start, value } = interval;
+            // Format the start time directly as it's already in IST
+            const localStartTime = new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
-            dateValues[dateString] = data.value || 0;
-            // Update the UI for the specific date
-            updateDateBox(receivedDay, data.value);
+            // Convert current time to HH:MM:SS format for comparison
+            const currentTimeFormatted = now.toISOString().split('T')[1].split('.')[0];
 
-            // Update Chart.js
-            const timestamp = `${data.date} ${data.time}`;
-            if (myChart.data.labels.length >= 6) {
-                myChart.data.labels.shift();
-                myChart.data.datasets[0].data.shift();
+            // Convert start time to HH:MM:SS format for comparison
+            const startTimeFormatted = new Date(start).toISOString().split('T')[1].split('.')[0];
+
+            // Only add data if it is before or equal to the current time
+
+                labels.push(localStartTime);
+                dataset.push(value);
+
+        });
+
+        // Update the chart data
+        myChart.data.labels = labels;
+        myChart.data.datasets[0].data = dataset;
+
+        myChart.update();
+
+
             }
-            myChart.data.labels.push(timestamp);
-            myChart.data.datasets[0].data.push(data.value);
-            lasthele.textContent = totalValue;
-            myChart.update();
+    else if (data.timeType === 'true') {
+                        lasthele.textContent = data.date;
 
-            console.log('Chart updated:', myChart.data);
-        } else if (data.type === 'date') {
-            totalConsumptionElement.textContent = data.value;
-            updateConsumptionStatus(); // Update the consumption status color
-        } else {
-            // Handle data for the entire month
-            dateValues = data.dateValues;
+        const { values } = data;
+        const now = new Date();
+        const currentTime = now.toISOString().split('T')[1].split('.')[0]; // Current time in HH:MM:SS format
 
-            // Update the UI for the entire month
-            updateCalendar();
-        }
-    };
+        // Initialize labels and data arrays
+        let labels = [];
+        let dataset = [];
 
-    const myChart = new Chart(document.getElementById('myChart'), {
-        type: 'bar',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Total Volume (mL)',
-                tension: 0,
-                data: [],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-                fill: true
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'second'
-                    }
-                },
-                y: {
-                    ticks: {
-                        beginAtZero: true
+        values.forEach(interval => {
+            const { start, value } = interval;
+            // Format the start time directly as it's already in IST
+            const localStartTime = new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            // Convert current time to HH:MM:SS format for comparison
+            const currentTimeFormatted = now.toISOString().split('T')[1].split('.')[0];
+
+            // Convert start time to HH:MM:SS format for comparison
+            const startTimeFormatted = new Date(start).toISOString().split('T')[1].split('.')[0];
+
+            // Only add data if it is before or equal to the current time
+            if ( data.type === "day"){
+                if (startTimeFormatted <= currentTime) {
+                labels.push(localStartTime);
+                    dataset.push(value);
+            }}
+            else{
+                labels.push(localStartTime);
+                dataset.push(value);
+            }
+        });
+
+        // Update the chart data
+        myChart.data.labels = labels;
+        myChart.data.datasets[0].data = dataset;
+
+        myChart.update();
+    }
+ else if (data.toaffect === 'chart') {
+                // Extract dates and values
+                const dates = Object.keys(data.dateValues);
+                const values = Object.values(data.dateValues);
+
+                // Update chart data
+                myChart.data.labels = dates;
+                myChart.data.datasets[0].data = values;
+
+                // Optionally update other chart properties here, like labels or colors
+                // myChart.data.datasets[0].label = "Sensor Data"; // For example
+
+                // Render the chart
+                myChart.update();
+            } else {
+                dateValues = data.dateValues;
+                updateCalendar();
+            }
+        };
+
+        const myChart = new Chart(document.getElementById('myChart'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Total Volume (mL)',
+                    tension: 0,
+                    data: [],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: true
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'category'
+                    },
+                    y: {
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value) {
+                                const date = new Date(value * 1000);
+                                return date.toISOString().substr(11, 8); // Return hh:mm:ss
+                            }
+                        }
                     }
                 }
             }
+        });
+
+        let refreshIntervals = {
+            minute: 10000, // 10 seconds
+            hour: 300000,  // 5 minutes
+            day: 3600000   // 1 hour
+        };
+
+        let currentRefreshInterval = null;
+
+        function startAutoRefresh(unit) {
+            if (currentRefreshInterval) {
+                clearInterval(currentRefreshInterval);
+            }
+
+            switch (unit) {
+                case 'minute':
+                    currentRefreshInterval = setInterval(() => updateChartData('minute', 1), refreshIntervals.minute);
+                    break;
+                case 'hour':
+                    currentRefreshInterval = setInterval(() => updateChartData('hour', 1), refreshIntervals.hour);
+                    break;
+                case 'day':
+                    currentRefreshInterval = setInterval(() => updateChartData('day', 24), refreshIntervals.day);
+                    break;
+                default:
+                    clearInterval(currentRefreshInterval);
+                    currentRefreshInterval = null;
+                    break;
+            }
         }
-    });
 
-    function generateDateBoxes(days) {
-        gridCalendar.innerHTML = '';
-        for (let day = 1; day <= days; day++) {
-            const dateBox = document.createElement('div');
-            dateBox.className = 'date-box';
+        past1MinButton.addEventListener('click', function() {
+            updateChartData('minute', 1);
+            startAutoRefresh('minute');
+        });
 
-            const dateSpan = document.createElement('span');
-            dateSpan.textContent = day; // Display only day part without leading zeros
+        past1HourButton.addEventListener('click', function() {
+            updateChartData('hour', 1);
+            startAutoRefresh('hour');
+        });
 
-            dateBox.appendChild(dateSpan);
-            gridCalendar.appendChild(dateBox);
+        wholeDayButton.addEventListener('click', function() {
+            updateChartData('day', 24);
+            startAutoRefresh('day');
+        });
 
-            // Initialize dateValues with default value 0
+        thisWeekButton.addEventListener('click', function() {
+            requestDataForWeek();
+        });
+
+        thisMonthButton.addEventListener('click', function() {
+            requestDataForMonthchart(currentYear, currentMonth);
+        });
+        startAutoRefresh('minute'); // Default refresh interval
+    function updateChartData(unit, value) {
+        const timestamp = new Date();
+        const date = timestamp.toISOString().split('T')[0]; // yyyy-mm-dd
+        let startTime, endTime;
+
+        // Function to format the time only
+        function formatTime(dateObj) {
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`; // hh:mm:ss
+        }
+
+        switch(unit) {
+            case 'minute':
+                timeType = 'minute';
+                const minutes = timestamp.getMinutes();
+                const seconds = timestamp.getSeconds();
+                const milliseconds = timestamp.getMilliseconds();
+
+                endTime = formatTime(timestamp);
+
+                const startDate = new Date(timestamp);
+                startDate.setMinutes(minutes - 1);
+                startDate.setSeconds(seconds);
+                startDate.setMilliseconds(milliseconds);
+                startTime = formatTime(startDate);
+                break;
+
+            case 'hour':
+                timeType = 'hour';
+                endTime = formatTime(timestamp);
+
+                // Calculate start time by subtracting one hour
+                const startDateHour = new Date(timestamp);
+                startDateHour.setHours(timestamp.getHours() - 1);
+                startTime = formatTime(startDateHour);
+                break;
+
+            case 'day':
+                timeType = 'day';
+                const startOfDay = new Date(timestamp);
+                startOfDay.setHours(0, 0, 0, 0); // Start of the day
+                startTime = formatTime(startOfDay);
+
+                const endOfDay = new Date(timestamp);
+                endOfDay.setHours(23, 59, 59, 999); // End of the day
+                endTime = formatTime(endOfDay);
+                break;
+        }
+
+        console.log('Requesting data of', date, 'from:', startTime, 'to', endTime);
+
+        // Clear previous chart data
+        myChart.data.labels = [];
+        myChart.data.datasets[0].data = [];
+        myChart.update();
+
+        // Send data with appropriate parameters
+        socket.send(JSON.stringify({
+            type: "time",
+            toaffect: "chart",
+            timeType: timeType,
+            date: date,
+            startTime: startTime,
+            endTime: endTime
+        }));
+    }
+
+        function generateDateBoxes(days) {
+            gridCalendar.innerHTML = '';
+            for (let day = 1; day <= days; day++) {
+                const dateBox = document.createElement('div');
+                dateBox.className = 'date-box';
+
+                const dateSpan = document.createElement('span');
+                dateSpan.textContent = day;
+
+                dateBox.appendChild(dateSpan);
+                gridCalendar.appendChild(dateBox);
+
+                const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                dateValues[dateString] = 0;
+
+                dateBox.addEventListener('click', function() {
+                    console.log('Date clicked:', dateString);
+                                        function formatTime(dateObj) {
+            const hours = String(dateObj.getHours()).padStart(2, '0');
+            const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+            const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`; // hh:mm:ss
+        }
+                    const timestamp = new Date();
+                const startOfDay = new Date(timestamp);
+                startOfDay.setHours(0, 0, 0, 0); // Start of the day
+                startTime = formatTime(startOfDay);
+
+                const endOfDay = new Date(timestamp);
+                endOfDay.setHours(23, 59, 59, 999); // End of the day
+                endTime = formatTime(endOfDay);
+
+            console.log('Requesting data for date:', dateString, startTime,endTime);
+
+            socket.send(JSON.stringify({ type: "date", toaffect: "chart",startTime: startTime,endTime: endTime,date: dateString}));
+
+                });
+            }
+        }
+
+        function updateDateBox(day, value) {
             const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-            dateValues[dateString] = 0;
+            const dateBoxes = gridCalendar.querySelectorAll('.date-box');
+            const dateBox = Array.from(dateBoxes).find(box => box.querySelector('span').textContent == day);
+            if (dateBox) {
+                dateBox.dataset.value = value;
+                dateBox.querySelector('span').textContent = day;
+            }
+        }
 
-            dateBox.addEventListener('click', function() {
-                console.log('Date clicked:', dateString);
-                socket.send(JSON.stringify({ type: "webdata", date: dateString }));
+        function updateConsumptionStatus() {
+            if (todayTotalValue > 19410) {
+                consumptionStatusElement.style.backgroundColor = 'red';
+            } else if (todayTotalValue > 17230) {
+                consumptionStatusElement.style.backgroundColor = 'yellow';
+            } else {
+                consumptionStatusElement.style.backgroundColor = 'green';
+            }
+        }
+
+        prevMonth.addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            monthAndYear.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
+            generateCalendar();
+            requestDataForMonth(currentYear, currentMonth);
+        });
+
+        nextMonth.addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            monthAndYear.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
+            generateCalendar();
+            requestDataForMonth(currentYear, currentMonth);
+        });
+
+        monthAndYear.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
+        generateCalendar();
+
+        function generateCalendar() {
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            generateDateBoxes(daysInMonth);
+            updateCalendar();
+        }
+
+        function updateCalendar() {
+            const dateBoxes = gridCalendar.querySelectorAll('.date-box');
+
+            dateBoxes.forEach(dateBox => {
+                const day = parseInt(dateBox.querySelector('span').textContent);
+                const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                const value = dateValues[dateString] || 0;
+
+                if (value === 0) {
+                    dateBox.style.backgroundColor = '#FFFFFF';
+                    dateBox.querySelector('span').style.color = '#1D282E';
+                    return;
+                }
+
+                const values = Object.values(dateValues).filter(v => v > 0);
+                const max = Math.max(...values);
+                const min = Math.min(...values);
+                let intensity;
+                if (max !== min) {
+                    intensity = (value - min) / (max - min);
+                } else {
+                    intensity = 0.5;
+                }
+
+                const startColor = [171, 200, 245];
+                const endColor = [8, 33, 74];
+
+                const r = Math.round(startColor[0] * (1 - intensity) + endColor[0] * intensity);
+                const g = Math.round(startColor[1] * (1 - intensity) + endColor[1] * intensity);
+                const b = Math.round(startColor[2] * (1 - intensity) + endColor[2] * intensity);
+
+                dateBox.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+                const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
+                const dateSpan = dateBox.querySelector('span');
+                dateSpan.style.color = (brightness > 150) ? '#1D282E' : '#FDFDFD';
             });
         }
-    }
 
-    function updateDateBox(day, value) {
-        const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        const dateBoxes = gridCalendar.querySelectorAll('.date-box');
-        const dateBox = Array.from(dateBoxes).find(box => box.querySelector('span').textContent == day);
-        if (dateBox) {
-            dateBox.dataset.value = value; // Store value in a dataset attribute
-            dateBox.querySelector('span').textContent = day; // Update day part without leading zeros
-        }
-    }
+        function requestDataForMonth(year, month) {
+            // Start date: first day of the current month
+            const startDate = new Date(year, month, 1).toISOString().split('T')[0];
 
-    function updateConsumptionStatus() {
-        const totalConsumption = parseFloat(totalConsumptionElement.textContent);
-        if (totalConsumption > 17230) {
-            consumptionStatusElement.style.backgroundColor = 'red';
-        } else {
-            consumptionStatusElement.style.backgroundColor = 'greenyellow'; // default color
-        }
-    }
+            // End date: last day of the current month
+            const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
 
-    prevMonth.addEventListener('click', function() {
-        currentMonth--;
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
+            console.log('Requesting data for date range:', startDate, 'to', endDate);
+
+            socket.send(JSON.stringify({
+                type: "daterange",
+                toaffect: "calendar",
+                startDate: startDate,
+                endDate: endDate
+            }));
         }
-        monthAndYear.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
-        generateCalendar();
-        requestDataForMonth(currentYear, currentMonth);
+
+        function requestDataForMonthchart(year, month) {
+            // Start date: first day of the current month
+            const startDate = new Date(year, month, 1).toISOString().split('T')[0];
+
+            // End date: last day of the current month
+            const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
+
+            console.log('Requesting data for date range:', startDate, 'to', endDate);
+
+            socket.send(JSON.stringify({
+                type: "daterange",
+                toaffect: "chart",
+                startDate: startDate,
+                endDate: endDate
+            }));
+        }
+
+        function requestDataForWeek() {
+            const today = new Date();
+            const firstDayOfWeek = today.getDate() - today.getDay() -6; // m
+            const lastDayOfWeek = firstDayOfWeek +6; // su
+
+            const startDate = new Date(today.setDate(firstDayOfWeek)).toISOString().split('T')[0];
+            const endDate = new Date(today.setDate(lastDayOfWeek)).toISOString().split('T')[0];
+
+            console.log('Requesting data for date range:', startDate, 'to', endDate);
+            socket.send(JSON.stringify({ type: "daterange", toaffect: "chart", startDate: startDate, endDate: endDate }));
+        }
+
+        function requestDataForDate(date) {
+            console.log('Requesting data for date:', date);
+            socket.send(JSON.stringify({ type: "date", date: date }));
+        }
+
+        function getMonthName(monthIndex) {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                                "July", "August", "September", "October", "November", "December"];
+            return monthNames[monthIndex];
+        }
     });
 
-    nextMonth.addEventListener('click', function() {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        monthAndYear.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
-        generateCalendar();
-        requestDataForMonth(currentYear, currentMonth);
-    });
 
-    // Initial setup
-    monthAndYear.textContent = `${getMonthName(currentMonth)} ${currentYear}`;
-    generateCalendar();
-
-    function generateCalendar() {
-        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-        generateDateBoxes(daysInMonth);
-        updateCalendar();
-    }
-
-    function updateCalendar() {
-        const dateBoxes = gridCalendar.querySelectorAll('.date-box');
-
-        dateBoxes.forEach(dateBox => {
-            const day = parseInt(dateBox.querySelector('span').textContent);
-            const dateString = `${currentYear}-${(currentMonth + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-            const value = dateValues[dateString] || 0;
-
-            if (value === 0) {
-                dateBox.style.backgroundColor = '#808080'; // Set default gray color
-                dateBox.querySelector('span').style.color = '#FFFFFF'; // Set default text color for better contrast
-                return;
-            }
-
-            // Calculate color intensity based on relative value
-            const values = Object.values(dateValues).filter(v => v > 0); // Filter out zeros
-            const max = Math.max(...values);
-            const min = Math.min(...values);
-            let intensity;
-            if (max !== min) {
-                intensity = (value - min) / (max - min); // Calculate intensity relative to min and max
-            } else {
-                intensity = 0.5; // If all values are the same, set intensity to midpoint
-            }
-
-            const startColor = [171, 200, 245]; // RGB values for lighter color
-            const endColor = [8, 33, 74];       // RGB values for darker color
-
-            const r = Math.round(startColor[0] * (1 - intensity) + endColor[0] * intensity);
-            const g = Math.round(startColor[1] * (1 - intensity) + endColor[1] * intensity);
-            const b = Math.round(startColor[2] * (1 - intensity) + endColor[2] * intensity);
-
-            dateBox.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-
-            // Determine text color based on background color intensity
-            const brightness = (0.299 * r + 0.587 * g + 0.114 * b);
-            const dateSpan = dateBox.querySelector('span');
-            dateSpan.style.color = (brightness > 150) ? '#1D282E' : '#FDFDFD'; // Light text on dark, dark text on light
-        });
-    }
-
-    function requestDataForMonth(year, month) {
-        const startDate = new Date(year, month, 1).toISOString().split('T')[0];
-        const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
-        console.log('Requesting data for date range:', startDate, 'to', endDate);
-        socket.send(JSON.stringify({ type: "webdata", startDate: startDate, endDate: endDate }));
-    }
-
-    function getMonthName(monthIndex) {
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-                            "July", "August", "September", "October", "November", "December"];
-        return monthNames[monthIndex];
-    }
-});

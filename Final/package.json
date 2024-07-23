@@ -8,5 +8,10 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "moment": "^2.30.1",
+    "mongodb": "^6.8.0",
+    "ws": "^8.18.0"
+  }
 }

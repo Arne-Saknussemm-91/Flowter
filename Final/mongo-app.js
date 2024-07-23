@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient } = require('mongodb');
 
 // WebSocket server initialization
 const wss = new WebSocket.Server({ port: 8000 });
@@ -29,12 +29,15 @@ async function handleWebSocket() {
                 try {
                     const data = JSON.parse(message);
 
-                    if (data.date) {
+                    if (data.type === 'date') {
                         console.log('Received date from client:', data.date);
-                        await handleDateQuery(data.date, ws);
-                    } else if (data.startDate && data.endDate) {
+                        await handleDateQuery(data.date,  data.toaffect,ws);
+                    } else if (data.type === 'daterange') {
                         console.log('Received date range from client:', data.startDate, 'to', data.endDate);
-                        await handleDateRangeQuery(data.startDate, data.endDate, ws);
+                        await handleDateRangeQuery(data.startDate, data.endDate, data.toaffect, ws);
+                    } else if (data.type === 'time') {
+                        console.log('Received time range from client:', data.date, data.startTime, 'to', data.endTime);
+                        await handleTimeRangeQuery(data.date, data.startTime, data.endTime, data.toaffect, data.timeType, ws);
                     }
                 } catch (error) {
                     console.error('Error handling client message:', error);
@@ -57,48 +60,93 @@ async function handleWebSocket() {
 }
 
 // Function to handle fetching data for a specific date
-async function handleDateQuery(date, ws) {
+async function handleDateQuery(date, toaffect, ws) {
     try {
         const db = mongoClient.db("FlowterDB");
         const sensorId = 'b1'; // Example sensor ID, replace with actual logic
         const sensorCollection = db.collection('sensors');
 
-        const query = { date: date, sid: sensorId };
-        const result = await sensorCollection.find(query).toArray();
+        // Construct the start and end Date objects
+        const startDateTime = new Date(`${date}T00:00:00Z`);
+        const endDateTime = new Date(`${date}T23:59:59Z`);
 
-        if (result.length > 0) {
-            console.log(`Found ${result.length} document(s) for sensor ${sensorId}`);
-            let dataVal = 0;
-            for (let i = 0; i < result.length; i++) {
-                dataVal += result[i].value;
+        // Construct the MongoDB query
+        const query = {
+            date: date
+        };
+
+        console.log('MongoDB query:', query);
+
+        // Fetch the results from MongoDB
+        const result = await sensorCollection.find(query).toArray();
+// console.log('MongoDB result:', result);
+
+        // Function to generate time intervals based on timeType
+        function generateIntervals(start, end, intervalMs) {
+            let intervals = [];
+            let current = new Date(start);
+            while (current < end) {
+                let next = new Date(current.getTime() + intervalMs);
+                intervals.push({ start: current.toISOString(), end: next.toISOString() });
+                current = next;
             }
-            const clickDateValue = { type: "date", date: date, value: dataVal };
-            console.log(clickDateValue);
-            ws.send(JSON.stringify(clickDateValue));
-        } else {
-            const clickDateValue = { type: "date", date: date, value: 0 };
-            console.log(clickDateValue);
-            ws.send(JSON.stringify(clickDateValue));
+            return intervals;
         }
+
+        let intervals = [];
+        let intervalMs;
+        intervalMs = 60 * 60 * 1000; // 1 hour
+        intervals = generateIntervals(startDateTime, endDateTime, intervalMs);
+//         console.log(intervals);
+        const timeValues = { type: "date", toaffect: toaffect, date: date, startTime: "00:00:00", endTime: "23:59:59", values: [] };
+
+        // Initialize the timeValues with zeroes
+        intervals.forEach(interval => {
+            timeValues.values.push({ start: interval.start, end: interval.end, value: 0 });
+        });
+
+        // Populate timeValues with data from result
+        result.forEach(reading => {
+            const readingDateTime = new Date(`${reading.date}T${reading.time}Z`);
+            timeValues.values.forEach(interval => {
+                const intervalStart = new Date(interval.start);
+                const intervalEnd = new Date(interval.end);
+                if (readingDateTime >= intervalStart && readingDateTime < intervalEnd) {
+                    interval.value += reading.value;
+                }
+            });
+        });
+
+        // Calculate the total value
+        const totval = timeValues.values.reduce((sum, interval) => sum + interval.value, 0);
+
+        // Include totval in the data sent via WebSocket
+        const response = { ...timeValues, totval };
+        ws.send(JSON.stringify(response));
+//         console.log(response);
     } catch (error) {
-        console.error('Error handling date query:', error);
+        console.error('Error handling time range query:', error.message);
+        console.error('Date:', date);
     }
 }
 
 // Function to handle fetching data for a date range
-async function handleDateRangeQuery(startDate, endDate, ws) {
+async function handleDateRangeQuery(startDate, endDate, toaffect, ws) {
     try {
         const db = mongoClient.db("FlowterDB");
         const sensorId = 'b1'; // Example sensor ID, replace with actual logic
         const sensorCollection = db.collection('sensors');
 
         const query = {
-            date: { $gte: startDate, $lte: endDate },
-            sid: sensorId
+            date: { $gte: startDate, $lte: endDate }
         };
-        const result = await sensorCollection.find(query).toArray();
 
-        const monthValues = { type: "month", sensorlocation: '', dateValues: {} };
+        console.log('MongoDB query:', query);
+
+        const result = await sensorCollection.find(query).toArray();
+//         console.log('Fetched result:', result);
+
+        const monthValues = { type: "month", toaffect: toaffect, sensorlocation: '', dateValues: {} };
 
         if (result.length > 0) {
             const userCollection = db.collection('users');
@@ -109,21 +157,123 @@ async function handleDateRangeQuery(startDate, endDate, ws) {
         }
 
         let currentDate = new Date(startDate);
-        const endDateObj = new Date(endDate);
-        while (currentDate <= endDateObj) {
+        while (currentDate <= new Date(endDate)) {
             const dateString = currentDate.toISOString().split('T')[0];
             monthValues.dateValues[dateString] = 0;
             currentDate.setDate(currentDate.getDate() + 1);
         }
 
         result.forEach(reading => {
-            monthValues.dateValues[reading.date] += reading.value;
+            const dateKey = reading.date;
+            monthValues.dateValues[dateKey] = (monthValues.dateValues[dateKey] || 0) + reading.value;
         });
 
         ws.send(JSON.stringify(monthValues));
-        console.log(monthValues);
+//         console.log(monthValues);
     } catch (error) {
-        console.error('Error handling date range query:', error);
+        console.error('Error handling date range query:', error.message);
+        console.error('Start Date:', startDate);
+        console.error('End Date:', endDate);
+    }
+}
+
+// Function to handle fetching data for a time range with specified timeType
+async function handleTimeRangeQuery(date, startTime, endTime, toaffect, timeType, ws) {
+    try {
+        if (!date || !startTime || !endTime) {
+            throw new Error('Invalid time range: date, startTime, and endTime must be defined');
+        }
+
+        const db = mongoClient.db("FlowterDB");
+        const sensorId = 'b1'; // Example sensor ID, replace with actual logic
+        const sensorCollection = db.collection('sensors');
+
+        // Construct the start and end Date objects
+        const startDateTime = new Date(`${date}T${startTime}Z`);
+        const endDateTime = new Date(`${date}T${endTime}Z`);
+
+        // Construct the MongoDB query
+        const query = {
+            date: date,
+            $expr: {
+                $and: [
+                    { $gte: [{ $toDate: { $concat: ["$date", "T", "$time"] } }, startDateTime] },
+                    { $lte: [{ $toDate: { $concat: ["$date", "T", "$time"] } }, endDateTime] }
+                ]
+            }
+        };
+
+        console.log('MongoDB query:', query);
+
+        // Fetch the results from MongoDB
+        const result = await sensorCollection.find(query).toArray();
+//         console.log('Fetched result:', result);
+        // Function to generate time intervals based on timeType
+        function generateIntervals(start, end, intervalMs) {
+            let intervals = [];
+            let current = new Date(start);
+            while (current < end) {
+                let next = new Date(current.getTime() + intervalMs);
+                intervals.push({ start: current.toISOString(), end: next.toISOString() });
+                current = next;
+            }
+            return intervals;
+        }
+
+        let intervals = [];
+        let intervalMs;
+
+        if (timeType) {
+            switch (timeType) {
+                case 'day':
+                    intervalMs = 60 * 60 * 1000; // 1 hour
+                    intervals = generateIntervals(startDateTime, endDateTime, intervalMs);
+                    break;
+                case 'hour':
+                    intervalMs = 5 * 60 * 1000; // 5 minutes
+                    intervals = generateIntervals(startDateTime, endDateTime, intervalMs);
+                    break;
+                case 'minute':
+                    intervalMs = 10 * 1000; // 10 seconds
+                    intervals = generateIntervals(startDateTime, endDateTime, intervalMs);
+                    break;
+                default:
+                    throw new Error('Invalid timeType. Must be "day", "hour", or "minute".');
+            }
+        } else {
+            intervals.push({ start: startDateTime.toISOString(), end: endDateTime.toISOString() });
+        }
+//         console.log(intervals);
+
+        const timeValues = { type: timeType || "custom", timeType: "true", toaffect: toaffect, date: date, startTime: startTime, endTime: endTime, values: [] };
+
+        // Initialize the timeValues with zeroes
+        intervals.forEach(interval => {
+            timeValues.values.push({ start: interval.start, end: interval.end, value: 0 });
+        });
+
+        // Populate timeValues with data from result
+        result.forEach(reading => {
+            const readingDateTime = new Date(`${reading.date}T${reading.time}Z`);
+            timeValues.values.forEach(interval => {
+                const intervalStart = new Date(interval.start);
+                const intervalEnd = new Date(interval.end);
+                if (readingDateTime >= intervalStart && readingDateTime < intervalEnd) {
+                    interval.value += reading.value;
+                }
+            });
+        });
+
+        ws.send(JSON.stringify(timeValues));
+//         console.log(timeValues);
+    } catch (error) {
+        console.error('Error handling time range query:', error.message);
+        console.error('Date:', date);
+        console.error('Start Time:', startTime);
+        console.error('End Time:', endTime);
+        if (timeType) {
+            console.error('TimeType:', timeType);
+        }
     }
 }
 
@@ -139,14 +289,14 @@ async function listenToChanges() {
 
         try {
             const newData = change.fullDocument;
-            if (!newData || !newData.sid) {
+            if (!newData || !newData.sensor_id) {
                 throw new Error('Invalid or missing document from MongoDB change stream');
             }
 
             // Prepare new reading data
             const newReading = {
                 type: "curr",
-                sid: newData.sid,
+                sensor_id: newData.sensor_id,
                 date: newData.date,
                 time: newData.time,
                 value: newData.value
