@@ -52,7 +52,7 @@ async function handleWebSocket() {
         });
 
         // Start listening to MongoDB changes
-        listenToChanges().catch(console.error);
+        // listenToChanges().catch(console.error);
 
     } catch (error) {
         console.error("Failed to connect to MongoDB:", error);
@@ -200,14 +200,16 @@ async function handleTimeRangeQuery(date, startTime, endTime, toaffect, timeType
                     { $gte: [{ $toDate: { $concat: ["$date", "T", "$time"] } }, startDateTime] },
                     { $lte: [{ $toDate: { $concat: ["$date", "T", "$time"] } }, endDateTime] }
                 ]
-            }
+            },
+            value: { $ne: 0 }
         };
+        
 
         console.log('MongoDB query:', query);
 
         // Fetch the results from MongoDB
         const result = await sensorCollection.find(query).toArray();
-//         console.log('Fetched result:', result);
+        // console.log('Fetched result:', result);
         // Function to generate time intervals based on timeType
         function generateIntervals(start, end, intervalMs) {
             let intervals = [];
@@ -278,47 +280,47 @@ async function handleTimeRangeQuery(date, startTime, endTime, toaffect, timeType
 }
 
 // Function to listen for new data from MongoDB and broadcast to clients
-async function listenToChanges() {
-    const db = mongoClient.db("FlowterDB");
-    const sensorCollection = db.collection('sensors');
+// async function listenToChanges() {
+//     const db = mongoClient.db("FlowterDB");
+//     const sensorCollection = db.collection('sensors');
 
-    const changeStream = sensorCollection.watch();
+//     const changeStream = sensorCollection.watch();
 
-    changeStream.on('change', async function(change) {
-        console.log('Change detected in MongoDB:', change);
+//     changeStream.on('change', async function(change) {
+//         console.log('Change detected in MongoDB:', change);
 
-        try {
-            const newData = change.fullDocument;
-            if (!newData || !newData.sensor_id) {
-                throw new Error('Invalid or missing document from MongoDB change stream');
-            }
+//         try {
+//             const newData = change.fullDocument;
+//             if (!newData || !newData.sensor_id) {
+//                 throw new Error('Invalid or missing document from MongoDB change stream');
+//             }
 
-            // Prepare new reading data
-            const newReading = {
-                type: "curr",
-                sensor_id: newData.sensor_id,
-                date: newData.date,
-                time: newData.time,
-                value: newData.value
-            };
+//             // Prepare new reading data
+//             const newReading = {
+//                 type: "curr",
+//                 sensor_id: newData.sensor_id,
+//                 date: newData.date,
+//                 time: newData.time,
+//                 value: newData.value
+//             };
 
-            // Broadcast new reading data to all connected clients
-            clients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify(newReading));
-                }
-            });
+//             // Broadcast new reading data to all connected clients
+//             clients.forEach(client => {
+//                 if (client.readyState === WebSocket.OPEN) {
+//                     client.send(JSON.stringify(newReading));
+//                 }
+//             });
 
-            console.log('Broadcasted new reading data to clients:', newReading);
-        } catch (error) {
-            console.error('Error processing MongoDB change event:', error);
-        }
-    });
+//             console.log('Broadcasted new reading data to clients:', newReading);
+//         } catch (error) {
+//             console.error('Error processing MongoDB change event:', error);
+//         }
+//     });
 
-    changeStream.on('error', function(error) {
-        console.error('Error in MongoDB change stream:', error);
-    });
-}
+//     changeStream.on('error', function(error) {
+//         console.error('Error in MongoDB change stream:', error);
+//     });
+// }
 
 // Start WebSocket server and handle connections/messages
 handleWebSocket().catch(console.error);

@@ -4,8 +4,39 @@
         const nextMonth = document.getElementById('nextMonth');
         const gridCalendar = document.querySelector('.grid-calendar');
         const totalConsumptionElement = document.getElementById('totalConsumption');
-        const consumptionStatusElement = document.getElementById('consumptionStatus');
+        // const consumptionStatusElement = document.getElementById('consumptionStatus');
         const lasthele = document.getElementById('lasth');
+        
+        const progressBar = document.getElementById('progress-bar');
+// const progressInput = document.getElementById('progress-input');
+
+const updateProgressBar = (value) => {
+    value = Number(value); // Ensure value is a number
+    progressBar.style.width = `${value}%`;
+
+    // Adjust color calculation
+    const midPoint = 85;
+    let red, green;
+
+    if (value <= midPoint) {
+        // Transition from red to yellow
+        green = 255;
+        red = Math.floor((value / midPoint) * 255);
+    } else {
+        // Transition from yellow to green
+        green = Math.floor(255 - ((value - midPoint) / (100 - midPoint)) * 255);
+        red = 255;
+    }
+
+    progressBar.style.backgroundColor = `rgb(${red}, ${green}, 0)`;
+};
+
+// progressInput.addEventListener('input', (event) => {
+//     updateProgressBar(event.target.value);
+// });
+
+// Initialize progress bar
+
 
         // Time interval buttons
         const past1MinButton = document.getElementById('past1Min');
@@ -20,6 +51,7 @@
         let totalValue = 0;
         let todayTotalValue = 0;
         let t1 = 0;
+        let ta1=0;
         let dateValues = {};
 
         const socket = new WebSocket('ws://localhost:8000'); // Adjust URL as needed
@@ -43,10 +75,13 @@
         const data = JSON.parse(event.data);
         console.log('Received data from server:', data);
         if (data.type === 'date') {
-            totalConsumptionElement.textContent = data.totval;
             todayTotalValue = data.totval; // Update today's total consumption totval
             lasthele.textContent = data.date;
-            updateConsumptionStatus();
+
+            updateProgressBar(todayTotalValue*3);
+            todayTotalValue = +todayTotalValue.toFixed(2);
+            totalConsumptionElement.textContent = todayTotalValue;
+
             if (t1 == 0){
                 t1++;
             }
@@ -183,10 +218,32 @@ const currentTime = formatTime(now);
 
                 // Render the chart
                 myChart.update();
+                let monthTotalValue = 0
+
+                for (let i = 0; i < values.length; i++) {
+                    monthTotalValue += values[i];
+                }
+                console.log(values)
+                
+                updateProgressBar(monthTotalValue/10);
+
             } else {
                 dateValues = data.dateValues;
+                const values = Object.values(data.dateValues);
                 updateCalendar();
+                if (ta1 != 0){
+                let monthTotalValue = 0
+                
+                for (let i = 0; i < values.length; i++) {
+                    monthTotalValue += values[i];
+                }
+                console.log(values)
+                
+                updateProgressBar(monthTotalValue/10);
+            }else{
+                ta1++;
             }
+        }
         };
 
         const myChart = new Chart(document.getElementById('myChart'), {
@@ -194,7 +251,7 @@ const currentTime = formatTime(now);
             data: {
                 labels: [],
                 datasets: [{
-                    label: 'Total Volume (mL)',
+                    label: 'Total Volume (L)',
                     tension: 0,
                     data: [],
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -211,10 +268,7 @@ const currentTime = formatTime(now);
                     y: {
                         ticks: {
                             beginAtZero: true,
-                            callback: function(value) {
-                                const date = new Date(value * 1000);
-                                return date.toISOString().substr(11, 8); // Return hh:mm:ss
-                            }
+
                         }
                     }
                 }
@@ -233,7 +287,7 @@ const currentTime = formatTime(now);
             if (currentRefreshInterval) {
                 clearInterval(currentRefreshInterval);
             }
-
+        
             switch (unit) {
                 case 'minute':
                     currentRefreshInterval = setInterval(() => updateChartData('minute', 1), refreshIntervals.minute);
@@ -250,6 +304,19 @@ const currentTime = formatTime(now);
                     break;
             }
         }
+        
+        function stopAutoRefresh() {
+            if (currentRefreshInterval) {
+                clearInterval(currentRefreshInterval);
+                currentRefreshInterval = null;
+            }
+        }
+        
+        // Example function that would be called periodically
+        function updateChartData(unit, value) {
+            console.log(`Updating chart data for ${unit} with value ${value}`);
+        }
+        
 
         past1MinButton.addEventListener('click', function() {
             updateChartData('minute', 1);
@@ -268,10 +335,12 @@ const currentTime = formatTime(now);
 
         thisWeekButton.addEventListener('click', function() {
             requestDataForWeek();
+            stopAutoRefresh();
         });
 
         thisMonthButton.addEventListener('click', function() {
             requestDataForMonthchart(currentYear, currentMonth);
+            stopAutoRefresh();
         });
         startAutoRefresh('minute'); // Default refresh interval
     function updateChartData(unit, value) {
@@ -359,6 +428,7 @@ const currentTime = formatTime(now);
                 dateValues[dateString] = 0;
 
                 dateBox.addEventListener('click', function() {
+                    stopAutoRefresh()
                     console.log('Date clicked:', dateString);
                                         function formatTime(dateObj) {
             const hours = String(dateObj.getHours()).padStart(2, '0');
@@ -393,15 +463,15 @@ const currentTime = formatTime(now);
             }
         }
 
-        function updateConsumptionStatus() {
-            if (todayTotalValue > 19410) {
-                consumptionStatusElement.style.backgroundColor = 'red';
-            } else if (todayTotalValue > 17230) {
-                consumptionStatusElement.style.backgroundColor = 'yellow';
-            } else {
-                consumptionStatusElement.style.backgroundColor = 'green';
-            }
-        }
+        // function updateConsumptionStatus() {
+        //     if (todayTotalValue > 19410) {
+        //         consumptionStatusElement.style.backgroundColor = 'red';
+        //     } else if (todayTotalValue > 17230) {
+        //         consumptionStatusElement.style.backgroundColor = 'yellow';
+        //     } else {
+        //         consumptionStatusElement.style.backgroundColor = 'green';
+        //     }
+        // }
 
         prevMonth.addEventListener('click', function() {
             currentMonth--;
@@ -512,11 +582,11 @@ const currentTime = formatTime(now);
 
             // Calculate the first day of the week (assuming the week starts on Monday)
             const firstDayOfWeek = new Date(today);
-            firstDayOfWeek.setDate(today.getDate() - today.getDay() + 1);
+            firstDayOfWeek.setDate(today.getDate() - today.getDay() -6);
             
             // Calculate the last day of the week (assuming the week ends on Sunday)
             const lastDayOfWeek = new Date(today);
-            lastDayOfWeek.setDate(today.getDate() - today.getDay() + 7);
+            lastDayOfWeek.setDate(today.getDate() - today.getDay() );
             
             // Format the dates as needed (e.g., YYYY-MM-DD)
             const formatDate = (date) => {

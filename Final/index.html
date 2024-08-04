@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Water Flow Rate Monitoring</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js"></script>
     <script defer src="scripts.js"></script>
 </head>
 <body>
     <header>
-        <div class="header">
-            FlowTer
-        </div>
+        <div class="header">FlowTer</div>
     </header>
 
     <div class="content">
@@ -22,7 +20,7 @@
                 <span id="monthAndYear"></span>
                 <span id="nextMonth">&#9654;</span>
             </div>
-            <div class="grid-calendar"></div>
+            <div class="grid-calendar" id="calendar"></div>
         </div>
 
         <div class="graphdiv">
@@ -43,9 +41,15 @@
             <p id="info1">Selected Date: <span id="lasth">Waiting for data...</span></p>
             <div class="statusdiv">
                 <p id="info2">Consumption status: </p>
-                <div class="lightbox" id="consumptionStatus"></div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
             </div>
         </div>
     </div>
+    <!-- <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>-->
+    <!-- <input type="range" id="progress-input" min="0" max="100" value="50">  -->
 </body>
 </html>
