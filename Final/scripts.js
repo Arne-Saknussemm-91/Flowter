@@ -19,7 +19,7 @@
         let today = new Date().toISOString().split('T')[0];
         let totalValue = 0;
         let todayTotalValue = 0;
-
+        let t1 = 0;
         let dateValues = {};
 
         const socket = new WebSocket('ws://localhost:8000'); // Adjust URL as needed
@@ -42,85 +42,133 @@
         socket.onmessage = function(event) {
         const data = JSON.parse(event.data);
         console.log('Received data from server:', data);
-    if (data.type === 'date') {
-                totalConsumptionElement.textContent = data.totval;
-                todayTotalValue = data.totval; // Update today's total consumption totval
-                lasthele.textContent = data.date;
-                updateConsumptionStatus();
-        const { values } = data;
-        const now = new Date();
-        const currentTime = now.toISOString().split('T')[1].split('.')[0]; // Current time in HH:MM:SS format
-
-        // Initialize labels and data arrays
-        let labels = [];
-        let dataset = [];
-
-        values.forEach(interval => {
-            const { start, value } = interval;
-            // Format the start time directly as it's already in IST
-            const localStartTime = new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-            // Convert current time to HH:MM:SS format for comparison
-            const currentTimeFormatted = now.toISOString().split('T')[1].split('.')[0];
-
-            // Convert start time to HH:MM:SS format for comparison
-            const startTimeFormatted = new Date(start).toISOString().split('T')[1].split('.')[0];
-
-            // Only add data if it is before or equal to the current time
-
-                labels.push(localStartTime);
-                dataset.push(value);
-
-        });
-
-        // Update the chart data
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = dataset;
-
-        myChart.update();
-
-
+        if (data.type === 'date') {
+            totalConsumptionElement.textContent = data.totval;
+            todayTotalValue = data.totval; // Update today's total consumption totval
+            lasthele.textContent = data.date;
+            updateConsumptionStatus();
+            if (t1 == 0){
+                t1++;
             }
-    else if (data.timeType === 'true') {
-                        lasthele.textContent = data.date;
-
-        const { values } = data;
-        const now = new Date();
-        const currentTime = now.toISOString().split('T')[1].split('.')[0]; // Current time in HH:MM:SS format
-
-        // Initialize labels and data arrays
-        let labels = [];
-        let dataset = [];
-
-        values.forEach(interval => {
-            const { start, value } = interval;
-            // Format the start time directly as it's already in IST
-            const localStartTime = new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-            // Convert current time to HH:MM:SS format for comparison
-            const currentTimeFormatted = now.toISOString().split('T')[1].split('.')[0];
-
-            // Convert start time to HH:MM:SS format for comparison
-            const startTimeFormatted = new Date(start).toISOString().split('T')[1].split('.')[0];
-
-            // Only add data if it is before or equal to the current time
-            if ( data.type === "day"){
-                if (startTimeFormatted <= currentTime) {
-                labels.push(localStartTime);
-                    dataset.push(value);
-            }}
             else{
-                labels.push(localStartTime);
-                dataset.push(value);
+            const { values } = data;
+            const now = new Date();
+            const currentTime = now.toISOString().split('T')[1].split('.')[0]; // Current time in HH:MM:SS format
+    
+            // Initialize labels and data arrays
+            let labels = [];
+            let dataset = [];
+    
+            // Helper function to convert 24-hour time to 12-hour time with AM/PM
+            function formatTo12Hour(timeString, includeSeconds) {
+                const [hours, minutes, seconds] = timeString.split(':').map(Number);
+                const period = hours >= 12 ? 'PM' : 'AM';
+                const adjustedHours = hours % 12 || 12; // Convert 0 hours to 12 for AM
+    
+                if (includeSeconds) {
+                    return `${adjustedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${period}`;
+                } else {
+                    return `${adjustedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
+                }
             }
-        });
+    
+            values.forEach(interval => {
+                const { start, value } = interval;
+    
+                // Convert start time to HH:MM:SS format for comparison
+                const startTime = new Date(start).toISOString().split('T')[1].split('.')[0];
+    
+                // Determine if seconds should be included based on type
+                const includeSeconds = data.type === 'minute';
+                const displayStartTime = formatTo12Hour(startTime, includeSeconds);
+    
+                // Only add data if it is before or equal to the current time
+                if (data.type === 'day' || data.type === 'minute' || data.type === 'date') {
+                    labels.push(displayStartTime);
+                    dataset.push(value);
+                }
+            });
+    
+            // Update the chart data
+            myChart.data.labels = labels;
+            myChart.data.datasets[0].data = dataset;
+    
+            myChart.update();
+        }}
+            else if (data.timeType === 'true') {
+                lasthele.textContent = data.date;
+            
+                const { values } = data;
+// Get the current local time
+const now = new Date();
 
-        // Update the chart data
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = dataset;
+// Function to format time as HH:MM:SS
+function formatTime(dateObj) {
+    const hours = String(dateObj.getHours()).padStart(2, '0');
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`; // hh:mm:ss
+}
 
-        myChart.update();
-    }
+// Get current time in local time zone in HH:MM:SS format
+const currentTime = formatTime(now);
+
+// console.log('Current local time:', currentTime);
+
+            
+                // Initialize labels and data arrays
+                let labels = [];
+                let dataset = [];
+            
+                // Helper function to convert 24-hour time to 12-hour time with AM/PM
+                function formatTo12Hour(timeString, includeSeconds) {
+                    const [hours, minutes, seconds] = timeString.split(':').map(Number);
+                    const period = hours >= 12 ? 'PM' : 'AM';
+                    const adjustedHours = hours % 12 || 12; // Convert 0 hours to 12 for AM
+            
+                    if (includeSeconds) {
+                        return `${adjustedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ${period}`;
+                    } else {
+                        return `${adjustedHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} ${period}`;
+                    }
+                }
+            
+                values.forEach(interval => {
+                    const { start, value } = interval;
+            
+                    // Convert start time to HH:MM:SS format for comparison
+                    const startTime = new Date(start).toISOString().split('T')[1].split('.')[0];
+            
+                    // Format start time based on type
+                    let displayStartTime;
+                    if (data.type === 'minute') {
+                        // Convert to 12-hour format with seconds
+                        displayStartTime = formatTo12Hour(startTime, true);
+                    } else {
+                        // Convert to 12-hour format without seconds
+                        const [hours, minutes] = startTime.split(':');
+                        displayStartTime = formatTo12Hour(`${hours}:${minutes}:00`, false);
+                    }
+            
+                    // Only add data if it is before or equal to the current time
+                    if (data.type === 'day') {
+                        if (startTime <= currentTime) {
+                            labels.push(displayStartTime);
+                            dataset.push(value);
+                        }
+                    } else {
+                        labels.push(displayStartTime);
+                        dataset.push(value);
+                    }
+                });
+            
+                // Update the chart data
+                myChart.data.labels = labels;
+                myChart.data.datasets[0].data = dataset;
+            
+                myChart.update();
+            }
+             
  else if (data.toaffect === 'chart') {
                 // Extract dates and values
                 const dates = Object.keys(data.dateValues);
@@ -461,11 +509,25 @@
 
         function requestDataForWeek() {
             const today = new Date();
-            const firstDayOfWeek = today.getDate() - today.getDay() -6; // m
-            const lastDayOfWeek = firstDayOfWeek +6; // su
 
-            const startDate = new Date(today.setDate(firstDayOfWeek)).toISOString().split('T')[0];
-            const endDate = new Date(today.setDate(lastDayOfWeek)).toISOString().split('T')[0];
+            // Calculate the first day of the week (assuming the week starts on Monday)
+            const firstDayOfWeek = new Date(today);
+            firstDayOfWeek.setDate(today.getDate() - today.getDay() + 1);
+            
+            // Calculate the last day of the week (assuming the week ends on Sunday)
+            const lastDayOfWeek = new Date(today);
+            lastDayOfWeek.setDate(today.getDate() - today.getDay() + 7);
+            
+            // Format the dates as needed (e.g., YYYY-MM-DD)
+            const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
+            const startDate = formatDate(firstDayOfWeek);
+            const endDate = formatDate(lastDayOfWeek);
 
             console.log('Requesting data for date range:', startDate, 'to', endDate);
             socket.send(JSON.stringify({ type: "daterange", toaffect: "chart", startDate: startDate, endDate: endDate }));
