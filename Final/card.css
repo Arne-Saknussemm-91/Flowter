@@ -9,13 +9,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #070707;
+    background-color: rgba(0,0,0,0.877);
   }
   #abc{
     color: #fcf9f9;
     font-size: 60px;
     margin-bottom: 5px;
-    margin-left: 449px;
+    margin-left: 40%;
     font-family: 'Times New Roman', Times, serif;
   }
   .slide-container {
