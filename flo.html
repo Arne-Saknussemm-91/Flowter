@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Data Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #flowRate {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #totalMilliLitres {
+            font-size: 24px;
+        }
+        #resetButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        #chartContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+        }
+        canvas {
+            max-width: 700px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Water Flow Rate</h1>
+    <div id="flowRate">Flow Rate: <span id="flowValue">Waiting for data...</span> L/min</div>
+    <div id="totalMilliLitres">Total Flow: <span id="totalValue">Waiting for data...</span> mL</div>
+    <button id="resetButton">Reset Total Flow</button>
+    <div id="chartContainer">
+        <canvas id="myChart"></canvas>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const websocketServerAddress = "ws://192.168.134.7:8000/";
+
+            const flowValue = document.getElementById("flowValue");
+            const totalValue = document.getElementById("totalValue");
+            const resetButton = document.getElementById("resetButton");
+
+            const socket = new WebSocket(websocketServerAddress);
+
+            let latestData = null;
+            let resetValue = 0;
+            let updateInterval;
+
+            socket.onopen = function(event) {
+                console.log("WebSocket is connected.");
+            };
+
+            socket.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.flowRate !== undefined && data.totalMilliLitres !== undefined) {
+                        latestData = data;
+                        flowValue.textContent = data.flowRate.toFixed(2);  // Display flow rate
+                        totalValue.textContent = (data.totalMilliLitres - resetValue).toFixed(2);    // Display adjusted total millilitres
+
+                        if (data.flowRate === 0 && updateInterval) {
+                            clearInterval(updateInterval);
+                            updateInterval = null;
+                        } else if (data.flowRate > 0 && !updateInterval) {
+                            updateInterval = setInterval(updateChart, 10000);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Error parsing message data:", e);
+                }
+            };
+
+            socket.onclose = function(event) {
+                console.log("WebSocket is closed.");
+            };
+
+            socket.onerror = function(error) {
+                console.error("WebSocket error:", error);
+            };
+
+            resetButton.addEventListener("click", function() {
+                if (latestData && latestData.totalMilliLitres !== undefined) {
+                    resetValue = latestData.totalMilliLitres;
+                }
+            });
+
+            // Initialize the chart
+            var ctx = document.getElementById("myChart").getContext("2d");
+            var chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Total Flow (mL)',
+                        backgroundColor: "green",
+                        data: []
+                    }]
+                },
+                options: {
+                    scales: {
+                        xAxes: [{
+                            barPercentage: 0.5,
+                            categoryPercentage: 0.5
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            function updateChart() {
+                if (latestData && latestData.flowRate > 0) {
+                    var time = new Date().toLocaleTimeString();
+                    chart.data.labels.push(time);
+                    chart.data.datasets[0].data.push(latestData.totalMilliLitres - resetValue);
+                    
+                    if (chart.data.labels.length > 10) {
+                        chart.data.labels.shift();
+                        chart.data.datasets[0].data.shift();
+                    }
+                    
+                    chart.update();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

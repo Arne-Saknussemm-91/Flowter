@@ -1,0 +1,412 @@
+html{
+    font-size: 16px;
+}
+
+@font-face {
+    font-family: 'Satoshi';
+    src: url("Satoshi-Regular.otf") format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Satoshi-bold';
+    src: url("Satoshi-Bold.otf") format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.font-style-header{
+    color: #B1B1B1;
+
+    /* Button Text */
+    font-family: Satoshi;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    display: flex;
+    padding: 16px 32px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex: 1 0 0;
+    border-radius: 36px;
+    text-decoration: none;
+}
+
+.logo{
+    display: flex;
+    min-width: 123px;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1 0 0;
+    align-self: stretch;
+    text-align: center;
+    font-family: Satoshi;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: -2.8px;
+	background: var(--Grey-Gradient-Exclusion, linear-gradient(180deg, #FFF 53%, rgba(255, 255, 255, 0.00) 100%));
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	mix-blend-mode: exclusion;
+    background-color: #000;
+}
+
+.font-style-header6{
+    font-family: "Satoshi", serif;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.button-navbar4{
+	display: flex;
+	padding: 16px 32px;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	flex: 2 0 0;
+	border-radius: 36px;
+    border: 2px solid #E9E9E9;
+    text-decoration: none;
+    color: #FFF;
+}
+
+.button-navbar4:hover{
+    background-color: #0A86F8;
+    box-shadow: inset 0 0 0 0px white;
+}
+
+.font-style-video{
+    font-family: "Satoshi", serif;
+}
+
+#videoDiv {width: 100%; height: auto; position: relative; overflow: hidden;}
+#video1 { margin: auto; display: block;}
+#videoMessage { position: absolute; top: 0; left: 0;
+display: flex;
+flex-direction: column; 
+justify-content: center;
+align-items: center; 
+width: 100%;
+height: 100%;}
+
+.messagevideo1{
+	gap: -10rem;
+}
+
+.message1{
+	font-family: "Satoshi-bold", serif;
+	font-size: 10rem;
+	font-weight: bold;
+	background: var(--Grey-Gradient-Exclusion, linear-gradient(180deg, #FFF 53%, rgba(255, 255, 255, 0.00) 100%));
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	mix-blend-mode: exclusion;
+	letter-spacing: -0.7rem;
+	margin-bottom: -5rem;
+}
+
+.message2{
+	text-align: center;
+    font-family: "Satoshi", serif;
+    color: #ffffff;
+    top:0;
+    left:0;
+    z-index:1;
+    font-size: 1.75rem;
+}
+
+.videoMessage1{
+	position: absolute; top: 0; left: 0;
+display: flex;
+flex-direction: column; 
+justify-content: center;
+align-items: center; 
+width: 100%;
+height: 100%;
+	gap: 2.5rem;
+}
+
+.message3{
+	border-radius: 2rem;
+    background: var(--Ocean-Blue, #0A86F8);
+    color: #e8e8e8;
+	padding: 1rem 2rem;
+    font-family: "Satoshi", serif;
+	font-size: 1.5rem;
+    box-shadow: inset 0 0 0 2px white;
+    border-color: #e8e8e8;
+}
+
+.about-product-title{
+	text-align: center;
+	font-family: "Satoshi", sans-serif;
+	font-weight: 900;
+    font-size: 3rem;
+	padding-top: 2vw;
+	padding-bottom: 2vw;
+}
+
+.connect-text{
+    color: #000;
+    text-align: center;
+    align-items: center;
+    font-family: Satoshi;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.connect-text-temp{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
+}
+
+.connect-text1{
+    color: #000;
+    text-align: center;
+    
+    /* Nav Text */
+    font-family: Satoshi;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.connect-text-temp1{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
+}
+
+.monitor-text-temp{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
+}
+
+.monitor-text{
+    color: #000;
+    text-align: center;
+    align-items: center;
+    font-family: Satoshi;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.monitor-text-temp1{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
+}
+
+.monitor-text1{
+    color: #000;
+    text-align: center;
+    
+    /* Nav Text */
+    font-family: Satoshi;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.save-text-temp{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
+}
+
+.save-text{
+    color: #000;
+    text-align: center;
+    align-items: center;
+    font-family: Satoshi;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.save-text-temp1{
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: 100%;
+}
+
+.save-text1{
+    color: #000;
+    text-align: center;
+    
+    /* Nav Text */
+    font-family: Satoshi;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.pricing{
+    color: var(--Ocean-Blue, #0A86F8);
+
+    /* Body Text */
+    font-family: Satoshi;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.below-pricing{
+    color: #000;
+    font-family: Satoshi;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.below-below-pricing{
+    color: #000;
+
+    /* Body Text */
+    font-family: Satoshi;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.text-below1{
+    color: #FFF;
+    text-align: center;
+    
+    /* Section Header */
+    font-family: Satoshi;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.panitext1{
+    color: var(--Ocean-Blue, #0A86F8);
+
+    /* Icon box Header */
+    font-family: Satoshi;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.panitext2{
+    color: #FFF;
+
+    /* Section Header */
+    font-family: Satoshi;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.panitext3{
+    color: #FFF;
+
+    /* Body Text */
+    font-family: Satoshi;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.review-heading-text{
+    color: #FFF;
+    text-align: center;
+    
+    /* Section Header */
+    font-family: Satoshi;
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    align-self: stretch;
+}
+
+.review-text{
+    color: #FFF;
+
+    /* Body Text */
+    font-family: Satoshi;
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.john-doe{
+    align-self: stretch;
+    color: #FFF;
+
+    /* Icon box Header */
+    font-family: Satoshi;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.ehead-title{
+    align-self: stretch;
+    color: #0A86F8;
+
+    /* Button Text bold */
+    font-family: Satoshi;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.footer-main-no-heading{
+	align-self: stretch;
+	color: #000;
+
+	/* Button Text */
+	font-family: Satoshi;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: normal;
+}
+
+.footer-main-no-content{
+	align-self: stretch;
+	color: #000;
+
+	/* Nav Text */
+	font-family: Satoshi;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+}
