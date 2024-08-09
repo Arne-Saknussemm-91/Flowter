@@ -140,7 +140,8 @@ progressBar.style.backgroundColor = `rgb(${red}, ${green}, 0)`;
     }}
         else if (data.timeType === 'true') {
             lasthele.textContent = data.date;
-        
+            totalConsumptionElement.textContent = todayTotalValue;
+
             const { values } = data;
 // Get the current local time
 const now = new Date();
